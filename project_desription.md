@@ -4,11 +4,11 @@ Calculadora pessoal para estimar o **valor líquido** da venda de uma posição,
 
 ---
 
-## ⚙️ Configuração
+## ⚙️ Configuration
 
-Antes de correr o programa, define as constantes no topo do ficheiro.
+Define const on the top of the script
 
-| Constante | Descrição |
+| Constante | Description |
 |---|---|
 | `QUANTIDADE` | Número de unidades detidas |
 | `PRECO_MEDIO_EUR` | Preço médio de compra, em euros |
@@ -19,7 +19,7 @@ Antes de correr o programa, define as constantes no topo do ficheiro.
 | `TAXA_LEVANTAMENTO_EUR` | Taxa de levantamento, em euros |
 | `TAXA_IRS_PCT` | Taxa de IRS sobre a mais-valia, em percentagem |
 
-### Em código
+### const
 
 ```text
 const QUANTIDADE
@@ -36,7 +36,7 @@ const TAXA_IRS_PCT
 
 ## 🧩 Funções
 
-| Função | Descrição |
+| Method | Description |
 |---|---|
 | `preco_atual_eur` | Obtém o preço atual do ativo, em euros |
 | `calcular` | Calcula o resultado líquido da venda |
@@ -44,11 +44,11 @@ const TAXA_IRS_PCT
 
 ---
 
-## 🚀 Utilização
+## 🚀 Usage
 
-1. Ajusta as constantes na secção **Configuração**.
-2. Executa o programa.
-3. Consulta o resultado calculado.
+1. Ajustes const in the **Configuration** settings
+2. Executes the script
+3. Consults the calculated result
 
 ---
 
