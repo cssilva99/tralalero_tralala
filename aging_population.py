@@ -2,6 +2,7 @@
 """
 Lucro/prejuízo líquido do ETF iShares Ageing Population (XTB), em euros,
 já com taxas de venda, de levantamento e IRS descontados.
+Calcula também o preço a que o ETF tem de chegar para a posição valer 1000 €.
 
 Instalar:   pip install yfinance
 Executar:   python etf_diario.py
@@ -19,6 +20,10 @@ TICKER = "2B77.DE"
 # Se o Yahoo falhar ou não bater certo com a XTB, preenche o preço atual (em EUR)
 # visto na app e o script usa-o em vez do Yahoo. Deixa None para usar o Yahoo.
 PRECO_MANUAL_EUR = None
+
+# ----------------- OBJETIVO -----------------
+# Valor que queres que a posição atinja (em euros).
+VALOR_ALVO_EUR = 1000.0
 
 # ----------------- TAXAS (confirma em xtb.com/pt/conta-e-taxas) -----------------
 COMISSAO_VENDA_PCT = 0.0      # 0% em ETFs até 100.000 € de volume mensal (depois 0,2%, mín. 10 €)
@@ -63,12 +68,51 @@ def calcular(preco):
         "lucro_antes_irs": mais_valia - TAXA_LEVANTAMENTO_EUR,
         "irs": irs,
         "lucro_liquido": lucro_liquido,
+        # Dinheiro que realmente recebes se vendesses a este preço
+        "valor_liquido": valor_bruto - comissao - irs - TAXA_LEVANTAMENTO_EUR,
     }
 
 
+def preco_alvo_bruto(alvo):
+    """Preço por unidade a que a posição (sem descontar nada) vale 'alvo' euros."""
+    return alvo / QUANTIDADE
+
+
+def preco_alvo_liquido(alvo):
+    """Preço por unidade a que, depois de comissões, IRS e levantamento, recebes 'alvo' euros.
+    Resolvido por bisseção, porque a comissão e o IRS dependem do próprio preço."""
+    lo, hi = 0.0, max(alvo / QUANTIDADE * 10, 1.0)
+    for _ in range(100):
+        meio = (lo + hi) / 2
+        if calcular(meio)["valor_liquido"] < alvo:
+            lo = meio
+        else:
+            hi = meio
+    return hi
+
+
 def main():
-    r = calcular(preco_atual_eur())
+    preco = preco_atual_eur()
+    r = calcular(preco)
     print(f"Lucro/perda líquido (após taxas, comissões e IRS): {r['lucro_liquido']:+.2f} €")
+
+    # --- Objetivo: posição a valer VALOR_ALVO_EUR ---
+    print()
+    print(f"Preço atual: {preco:.4f} € | Valor atual da posição: {r['valor_bruto']:.2f} €")
+
+    alvo_bruto = preco_alvo_bruto(VALOR_ALVO_EUR)
+    if r["valor_bruto"] >= VALOR_ALVO_EUR:
+        print(f"A posição já vale {VALOR_ALVO_EUR:.0f} € ou mais (limite bruto atingido).")
+    else:
+        falta = (alvo_bruto / preco - 1) * 100
+        print(f"Para a posição valer {VALOR_ALVO_EUR:.0f} € (bruto): preço de {alvo_bruto:.4f} € ({falta:+.1f}% face ao atual)")
+
+    alvo_liquido = preco_alvo_liquido(VALOR_ALVO_EUR)
+    if r["valor_liquido"] >= VALOR_ALVO_EUR:
+        print(f"Já receberias {VALOR_ALVO_EUR:.0f} € ou mais depois de taxas e IRS.")
+    else:
+        falta = (alvo_liquido / preco - 1) * 100
+        print(f"Para receberes {VALOR_ALVO_EUR:.0f} € (líquido, após IRS e taxas): preço de {alvo_liquido:.4f} € ({falta:+.1f}% face ao atual)")
 
 
 if __name__ == "__main__":
