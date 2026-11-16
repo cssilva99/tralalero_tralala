@@ -1,12 +1,24 @@
+
 #!/usr/bin/env python3
 """
 Lucro/prejuízo líquido do ETF iShares Ageing Population (XTB), em euros,
 já com taxas de venda, de levantamento e IRS descontados.
-Calcula também o preço a que o ETF tem de chegar para a posição valer 1000 €.
+Calcula o preço a que a posição vale 1000 € e avisa por Telegram quando lá chega.
 
 Instalar:   pip install yfinance
-Executar:   python etf_diario.py
+Executar:   python etf_diario.py            (verifica e avisa se for caso disso)
+            python etf_diario.py --resumo   (verifica e envia também o resumo do lucro)
+            python etf_diario.py --teste    (envia só uma mensagem de teste)
+
+O token e o chat id do Telegram vêm das variáveis de ambiente
+TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID (nunca os escrevas no código).
 """
+import json
+import os
+import sys
+import urllib.parse
+import urllib.request
+
 import yfinance as yf
 
 # ----------------- OS TEUS DADOS (do ecrã "My trades" da XTB) -----------------
@@ -21,9 +33,17 @@ TICKER = "2B77.DE"
 # visto na app e o script usa-o em vez do Yahoo. Deixa None para usar o Yahoo.
 PRECO_MANUAL_EUR = None
 
-# ----------------- OBJETIVO -----------------
+# ----------------- OBJETIVO E ALERTA -----------------
 # Valor que queres que a posição atinja (em euros).
 VALOR_ALVO_EUR = 1000.0
+
+# Em que valor se baseia o alerta:
+#   "bruto"   -> valor da posição na XTB (o número que vês na app)
+#   "liquido" -> o que recebias depois de comissão, IRS e levantamento
+ALERTAR_COM = "bruto"
+
+# Ficheiro onde se guarda se o alvo já foi atingido (evita avisos repetidos)
+FICHEIRO_ESTADO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "estado.json")
 
 # ----------------- TAXAS (confirma em xtb.com/pt/conta-e-taxas) -----------------
 COMISSAO_VENDA_PCT = 0.0      # 0% em ETFs até 100.000 € de volume mensal (depois 0,2%, mín. 10 €)
@@ -90,6 +110,24 @@ def preco_alvo_liquido(alvo):
             hi = meio
     return hi
 
+
+# ----------------- TELEGRAM -----------------
+def enviar_telegram(texto):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        print("Telegram não configurado (faltam TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID). Mensagem não enviada.")
+        return False
+    dados = urllib.parse.urlencode({"chat_id": chat_id, "text": texto}).encode()
+    try:
+        urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage", data=dados, timeout=15)
+        return True
+    except Exception as e:
+        # Não imprimimos o URL (contém o token)
+        print(f"Erro ao enviar para o Telegram: {type(e).__name__}")
+        return False
+
+
 def enviar_resumo(preco, r):
     texto = (
         f"📊 Resumo ETF Ageing Population\n"
@@ -106,10 +144,31 @@ def enviar_resumo(preco, r):
     if enviar_telegram(texto):
         print("Resumo enviado para o Telegram.")
 
+
+# ----------------- ESTADO (para avisar só uma vez) -----------------
+def ler_estado():
+    try:
+        with open(FICHEIRO_ESTADO, encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def guardar_estado(estado):
+    with open(FICHEIRO_ESTADO, "w", encoding="utf-8") as f:
+        json.dump(estado, f)
+
+
 def main():
+    if "--teste" in sys.argv:
+        ok = enviar_telegram("✅ Teste: o alerta do ETF está a funcionar.")
+        print("Mensagem de teste enviada." if ok else "Falhou o envio da mensagem de teste.")
+        return
+
     preco = preco_atual_eur()
     r = calcular(preco)
     print(f"Lucro/perda líquido (após taxas, comissões e IRS): {r['lucro_liquido']:+.2f} €")
+
     if "--resumo" in sys.argv:
         enviar_resumo(preco, r)
 
@@ -130,6 +189,27 @@ def main():
     else:
         falta = (alvo_liquido / preco - 1) * 100
         print(f"Para receberes {VALOR_ALVO_EUR:.0f} € (líquido, após IRS e taxas): preço de {alvo_liquido:.4f} € ({falta:+.1f}% face ao atual)")
+
+    # --- Alerta (só quando passa de "abaixo" para "acima" do alvo) ---
+    valor_ref = r["valor_liquido"] if ALERTAR_COM == "liquido" else r["valor_bruto"]
+    acima = valor_ref >= VALOR_ALVO_EUR
+    estava_acima = ler_estado().get("acima", False)
+
+    if acima and not estava_acima:
+        texto = (
+            f"🎯 O ETF Ageing Population chegou ao alvo!\n"
+            f"Posição: {r['valor_bruto']:.2f} € (alvo {VALOR_ALVO_EUR:.0f} € {ALERTAR_COM})\n"
+            f"Preço atual: {preco:.4f} €\n"
+            f"Lucro líquido após IRS e taxas: {r['lucro_liquido']:+.2f} €"
+        )
+        if enviar_telegram(texto):
+            print("Alerta enviado para o Telegram.")
+            guardar_estado({"acima": True})
+        else:
+            print("Alerta não enviado; volto a tentar na próxima execução.")
+    else:
+        # Se voltou a ficar abaixo do alvo, "rearma" o alerta para a próxima vez que subir
+        guardar_estado({"acima": acima})
 
 
 if __name__ == "__main__":
