@@ -50,6 +50,10 @@ const TAXA_IRS_PCT
 2. Executes the script
 3. Consults the calculated result
 
+## 🚀 VS Code Extensions
+
+<img width="255" height="218" alt="extensions" src="https://github.com/user-attachments/assets/760eff19-8eaf-429f-ba2b-f1b03c61ead7" />
+
 ---
 
 ## 📝 Notas
