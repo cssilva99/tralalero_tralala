@@ -34,7 +34,7 @@ const TAXA_IRS_PCT
 
 ---
 
-## 🧩 Funções
+## 🧩 Python Methods
 
 | Method | Description |
 |---|---|
@@ -52,11 +52,14 @@ const TAXA_IRS_PCT
 
 ## 🚀 VS Code Extensions
 
-<img width="255" height="218" alt="extensions" src="https://github.com/user-attachments/assets/760eff19-8eaf-429f-ba2b-f1b03c61ead7" />
+<img width="255" height="218" alt="extensions" src="https://github.com/user-attachments/assets/herethename"
 
 ---
+## 📝 Telegram bot
 
-## 📝 Notas
+<img width="255" height="218" alt="extensions" src="https://github.com/user-attachments/assets/760eff19-8eaf-429f-ba2b-f1b03c61ead7"
 
-- Os valores monetários estão todos em **euros (EUR)**.
-- As percentagens (`*_PCT`) devem ser indicadas como número, por exemplo `28` para 28 %.
+## 📝 Notes
+
+- Currency in **EUR**.
+- Percentage should be a number (`*_PCT`) such as por `28` to 28 %.
