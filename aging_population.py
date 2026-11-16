@@ -90,11 +90,28 @@ def preco_alvo_liquido(alvo):
             hi = meio
     return hi
 
+def enviar_resumo(preco, r):
+    texto = (
+        f"📊 Resumo ETF Ageing Population\n"
+        f"Preço atual: {preco:.4f} €\n"
+        f"Valor da posição: {r['valor_bruto']:.2f} €\n"
+        f"Custo de compra: {PRECO_MEDIO_EUR * QUANTIDADE:.2f} €\n"
+        f"Comissão de venda: {r['comissao_venda']:.2f} €\n"
+        f"Taxa de levantamento: {r['levantamento']:.2f} €\n"
+        f"Lucro antes de IRS: {r['lucro_antes_irs']:+.2f} €\n"
+        f"IRS ({TAXA_IRS_PCT:.1f}%): {r['irs']:.2f} €\n"
+        f"Lucro líquido: {r['lucro_liquido']:+.2f} €\n"
+        f"Receberias (líquido): {r['valor_liquido']:.2f} €"
+    )
+    if enviar_telegram(texto):
+        print("Resumo enviado para o Telegram.")
 
 def main():
     preco = preco_atual_eur()
     r = calcular(preco)
     print(f"Lucro/perda líquido (após taxas, comissões e IRS): {r['lucro_liquido']:+.2f} €")
+    if "--resumo" in sys.argv:
+        enviar_resumo(preco, r)
 
     # --- Objetivo: posição a valer VALOR_ALVO_EUR ---
     print()
