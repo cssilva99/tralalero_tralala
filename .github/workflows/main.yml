@@ -2,10 +2,10 @@ name: Alerta ETF
 
 on:
   schedule:
-    # De hora a hora, das 08:00 às 16:00 UTC, de segunda a sexta
+    # From 8 a.m. till 4 p.m. UTC, every hour from Monday to Friday
     # (cobre o horário da bolsa de Xetra em hora de Portugal/Alemanha)
     - cron: "0 8-16 * * 1-5"
-  workflow_dispatch:   # permite correr manualmente no separador Actions
+  workflow_dispatch:   # manual trigger
 
 permissions:
   contents: write      # necessário para guardar o estado.json
@@ -24,7 +24,7 @@ jobs:
         run: pip install yfinance
 
       - name: Verificar preço e avisar
-        run: python etf_diario.py
+        run: python aging_population.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
