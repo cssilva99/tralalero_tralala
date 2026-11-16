@@ -18,6 +18,7 @@ import os
 import sys
 import urllib.parse
 import urllib.request
+import urllib.error
 
 import yfinance as yf
 
@@ -122,10 +123,13 @@ def enviar_telegram(texto):
     try:
         urllib.request.urlopen(f"https://api.telegram.org/bot{token}/sendMessage", data=dados, timeout=15)
         return True
+    except urllib.error.HTTPError as e:
+        print(f"Erro Telegram HTTP {e.code}: {e.read().decode()[:200]}")
+        return False
     except Exception as e:
-        # Não imprimimos o URL (contém o token)
         print(f"Erro ao enviar para o Telegram: {type(e).__name__}")
         return False
+    
 
 
 def enviar_resumo(preco, r):
