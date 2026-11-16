@@ -24,7 +24,7 @@ jobs:
         run: pip install yfinance
 
       - name: Verificar preço e avisar
-        run: python aging_population.py
+        run: python aging_population.py ${{ github.event_name == 'workflow_dispatch' && '--resumo' || '' }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
