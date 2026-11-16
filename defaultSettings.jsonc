@@ -1,0 +1,43 @@
+{
+  // =========================================================================
+  // CONFIGURAÇÃO DAS EXTENSÕES CLAUDE NO VS CODE (settings.json)
+  // =========================================================================
+
+  // 1. Claude Code for VS Code (Anthropic - Extensão Oficial)
+  "claude-code.selectedModel": "claude-sonnet-4-6",
+  "claude-code.autoSave": true,
+  "claude-code.useTerminal": false,
+  "claude-code.allowDangerouslySkipPermissions": false,
+
+  // 2. Chat for Claude Code (Andre Pimenta)
+  "claudeCodeChat.thinkingMode": "normal",
+  "claudeCodeChat.autoScroll": true,
+  "claudeCodeChat.showTokenCount": true,
+
+  // 3. Claude Code Assistant for VSCode (CodeFlow Studio)
+  "claudeCodeAssistant.enableInlineSuggestions": true,
+  "claudeCodeAssistant.autoContext": true,
+
+  // 4. Claude Code Usage (GrowthJack)
+  "claudeCodeUsage.enabled": true,
+  "claudeCodeUsage.refreshInterval": 60,
+  "claudeCodeUsage.showInStatusBar": true,
+  "claudeCodeUsage.currency": "EUR",
+
+  // 5. Claude Code YOLO (Atenção: ativa execução automática sem pedir permissão)
+  "claudeCodeYolo.enabled": false,
+  "claudeCodeYolo.autoApproveSafeCommands": true,
+
+  // 6. Claude Notifier (Singularity Inc.)
+  "claudeNotifier.enabled": true,
+  "claudeNotifier.soundOnComplete": true,
+  "claudeNotifier.soundOnError": true,
+  "claudeNotifier.volume": 0.7,
+
+  // =========================================================================
+  // AJUSTES DO EDITOR PARA MELHOR INTEGRAÇÃO
+  // =========================================================================
+  "editor.inlineSuggest.enabled": true,
+  "files.autoSave": "afterDelay",
+  "terminal.integrated.scrollback": 10000
+}
