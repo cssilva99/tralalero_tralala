@@ -1,6 +1,6 @@
 # 📈 Personal Project
 
-Calculadora pessoal para estimar o **valor líquido** da venda de uma posição, tendo em conta comissões, taxas de levantamento e imposto (IRS).
+Personal calculator to estimate the **net value** of selling a position, taking into account commissions, withdrawal fees, and capital gains tax (IRS).
 
 ---
 
@@ -8,28 +8,28 @@ Calculadora pessoal para estimar o **valor líquido** da venda de uma posição,
 
 Define const on the top of the script
 
-| Constante | Description |
+| Constant | Description |
 |---|---|
-| `QUANTIDADE` | Número de unidades detidas |
-| `PRECO_MEDIO_EUR` | Preço médio de compra, em euros |
-| `TICKER` | Símbolo do ativo (ex.: `AAPL`) |
-| `PRECO_MANUAL_EUR` | Preço manual, em euros (usado quando não há cotação automática) |
-| `COMISSAO_VENDA_PCT` | Comissão de venda, em percentagem |
-| `COMISSAO_VENDA_MIN` | Comissão de venda mínima, em euros |
-| `TAXA_LEVANTAMENTO_EUR` | Taxa de levantamento, em euros |
-| `TAXA_IRS_PCT` | Taxa de IRS sobre a mais-valia, em percentagem |
+| `QUANTITY` | Number of units held |
+| `AVERAGE_PRICE_EUR` | Average purchase price, in euros |
+| `TICKER` | Asset symbol (e.g., `AAPL`) |
+| `MANUAL_PRICE_EUR` | Manual price, in euros (used when automatic quote is not available) |
+| `SELL_COMMISSION_PCT` | Selling commission, in percentage |
+| `SELL_COMMISSION_MIN` | Minimum selling commission, in euros |
+| `WITHDRAWAL_FEE_EUR` | Withdrawal fee, in euros |
+| `IRS_RATE_PCT` | Capital gains tax rate (IRS), in percentage |
 
 ### const
 
 ```text
-const QUANTIDADE
-const PRECO_MEDIO_EUR
+const QUANTITY
+const AVERAGE_PRICE_EUR
 const TICKER
-const PRECO_MANUAL_EUR
-const COMISSAO_VENDA_PCT
-const COMISSAO_VENDA_MIN
-const TAXA_LEVANTAMENTO_EUR
-const TAXA_IRS_PCT
+const MANUAL_PRICE_EUR
+const SELL_COMMISSION_PCT
+const SELL_COMMISSION_MIN
+const WITHDRAWAL_FEE_EUR
+const IRS_RATE_PCT
 ```
 
 ---
