@@ -31,18 +31,18 @@ const SELL_COMMISSION_MIN
 const WITHDRAWAL_FEE_EUR
 const IRS_RATE_PCT
 ```
-
 ---
 
 ## 🧩 Python Methods
 
 | Method | Description |
 |---|---|
-| `preco_atual_eur` | Obtém o preço atual do ativo, em euros |
-| `calcular` | Calcula o resultado líquido da venda |
-| `main` | Ponto de entrada do programa |
+| `current_price_eur` | Gets the current price of the asset, in euros |
+| `calculate` | Calculates the net result of the sale |
+| `main` | Program entry point |
 
 ---
+
 
 ## 🚀 Usage
 
